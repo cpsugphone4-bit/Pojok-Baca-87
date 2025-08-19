@@ -1,114 +1,224 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>📚 Pojok Baca 87</title>
-<style>
-body{margin:0;font-family:sans-serif;background:#ffffff;color:#111827;line-height:1.6}
-header{background:#f3f4f6;padding:16px;text-align:center;box-shadow:0 2px 4px rgba(0,0,0,0.1)}
-header h1{margin:0;font-size:22px}
-.container{max-width:1000px;margin:20px auto;padding:0 16px}
-section{margin-bottom:30px}
-.card{background:#f9fafb;border:1px solid #e5e7eb;padding:16px;border-radius:10px;margin-bottom:16px}
-.input{padding:8px;border-radius:6px;border:1px solid #d1d5db;width:70%}
-.btn{padding:8px 12px;margin:4px;border:none;border-radius:6px;cursor:pointer}
-.btn.accent{background:#22c55e;color:#fff}
-.btn.primary{background:#2563eb;color:#fff}
-.btn.warn{background:#f97316;color:#fff}
-.item{padding:8px;border-bottom:1px solid #e5e7eb;display:flex;justify-content:space-between;align-items:center}
-#pdfViewer{width:100%;height:70vh;border:1px solid #d1d5db;border-radius:8px}
-.gallery{display:flex;gap:10px;overflow-x:auto}
-.gallery img{height:200px;border-radius:10px;box-shadow:0 2px 6px rgba(0,0,0,0.15)}
-.history li{margin:6px 0}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pojok Baca 87</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      background: #f4fbff;
+      color: #333;
+    }
+    header {
+      background: linear-gradient(90deg, #00bfa5, #1de9b6);
+      color: white;
+      padding: 1rem;
+      text-align: center;
+      font-size: 1.5rem;
+      font-weight: bold;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+    }
+    main {
+      padding: 20px;
+      max-width: 1000px;
+      margin: auto;
+    }
+    h2 {
+      border-left: 5px solid #00bfa5;
+      padding-left: 10px;
+      color: #00796b;
+    }
+    .search-box {
+      display: flex;
+      margin-bottom: 20px;
+    }
+    .search-box input {
+      flex: 1;
+      padding: 10px;
+      border: 2px solid #00bfa5;
+      border-radius: 8px 0 0 8px;
+      outline: none;
+    }
+    .search-box button {
+      background: #00bfa5;
+      border: none;
+      color: white;
+      padding: 10px 15px;
+      border-radius: 0 8px 8px 0;
+      cursor: pointer;
+    }
+    .search-box button:hover {
+      background: #00796b;
+    }
+    .book-item {
+      background: white;
+      padding: 15px;
+      margin: 10px 0;
+      border-radius: 10px;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .book-item button, .book-item a {
+      margin-left: 10px;
+      padding: 6px 12px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+    }
+    .book-item button {
+      background: #00bfa5;
+      color: white;
+    }
+    .book-item a {
+      background: #e0f7fa;
+      color: #00796b;
+      text-decoration: none;
+    }
+    iframe {
+      width: 100%;
+      height: 500px;
+      border: none;
+      margin-top: 20px;
+      border-radius: 10px;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+    }
+    .timer, .history, .gallery {
+      background: white;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+      margin: 20px 0;
+    }
+    .timer button {
+      margin: 5px;
+      padding: 8px 14px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      background: #00bfa5;
+      color: white;
+    }
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px,1fr));
+      gap: 10px;
+    }
+    .gallery-grid img {
+      width: 100%;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+      transition: transform 0.3s;
+    }
+    .gallery-grid img:hover {
+      transform: scale(1.05);
+    }
+  </style>
 </head>
 <body>
-<header><h1>📚 Pojok Baca 87</h1></header>
-<div class="container">
+  <header>📚 Pojok Baca 87</header>
+  <main>
+    <section>
+      <h2>Pencarian Buku</h2>
+      <div class="search-box">
+        <input type="text" id="searchInput" placeholder="Cari buku...">
+        <button onclick="searchBooks()">Cari</button>
+      </div>
+      <div id="results"></div>
+      <iframe id="pdfViewer"></iframe>
+    </section>
 
-  <!-- Cari Buku -->
-  <section id="buku">
-    <h2>🔎 Cari Buku</h2>
-    <input id="q" class="input" placeholder="Contoh: Matematika Kelas 7"/>
-    <button id="btnCari" class="btn accent">Cari</button>
-    <div id="results" class="card"></div>
-    <iframe id="pdfViewer"></iframe>
-  </section>
+    <section class="timer">
+      <h2>⏱ Timer Membaca</h2>
+      <div id="timerDisplay">00:00</div>
+      <button onclick="startTimer()">Mulai</button>
+      <button onclick="pauseTimer()">Jeda</button>
+      <button onclick="resetTimer()">Reset</button>
+    </section>
 
-  <!-- Timer -->
-  <section id="timer">
-    <h2>⏱ Timer Membaca</h2>
-    <div class="card">
-      <div id="timeDisp" style="font-size:28px;font-weight:700">00:00</div>
-      <button id="tStart" class="btn primary">Mulai</button>
-      <button id="tPause" class="btn">Jeda</button>
-      <button id="tStop" class="btn warn">Stop & Simpan</button>
-    </div>
-  </section>
+    <section class="history">
+      <h2>📜 Riwayat Membaca</h2>
+      <ul id="historyList"></ul>
+    </section>
 
-  <!-- Riwayat -->
-  <section id="riwayat">
-    <h2>📜 Riwayat Membaca</h2>
-    <div class="card">
-      <ul id="history" class="history"></ul>
-      <button id="clearHist" class="btn warn">Hapus Semua</button>
-    </div>
-  </section>
+    <section class="gallery">
+      <h2>🖼 Gallery Pojok Baca</h2>
+      <div class="gallery-grid">
+        <img src="https://i.postimg.cc/JhP0HkX2/20250819-123403.jpg" alt="Rak Buku">
+        <img src="https://i.postimg.cc/tR1dyqQj/20250819-123536.jpg" alt="Sudut Membaca">
+      </div>
+    </section>
+  </main>
 
-  <!-- Gallery -->
-  <section id="galeri">
-    <h2>🖼 Gallery</h2>
-    <div class="card gallery">
-      <img src="https://i.postimg.cc/JhP0HkX2/20250819-123403.jpg" alt="gambar1">
-      <img src="https://i.postimg.cc/tR1dyqQj/20250819-123536.jpg" alt="gambar2">
-    </div>
-  </section>
-</div>
+  <script>
+    let timerInterval;
+    let seconds = 0;
 
-<script>
-// Timer
-let timer=null, secs=0, currentBook='(Tanpa Judul)';
-function showTime(){let m=Math.floor(secs/60),s=secs%60;timeDisp.textContent=`${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;}
-tStart.onclick=()=>{if(!timer){timer=setInterval(()=>{secs++;showTime();},1000);}};
-tPause.onclick=()=>{clearInterval(timer);timer=null;};
-tStop.onclick=()=>{clearInterval(timer);timer=null;let now=new Date().toLocaleString('id-ID');let hist=JSON.parse(localStorage.getItem('hist87')||'[]');hist.push({title:currentBook,dur:secs,at:now});localStorage.setItem('hist87',JSON.stringify(hist));secs=0;showTime();renderHistory();};
-function renderHistory(){let hist=JSON.parse(localStorage.getItem('hist87')||'[]');history.innerHTML=hist.map((x,i)=>`<li>${x.title} — ${Math.floor(x.dur/60)}m ${x.dur%60}s (${x.at}) <button onclick="delHist(${i})">❌</button></li>`).join('')||'Belum ada riwayat';}
-function delHist(i){let hist=JSON.parse(localStorage.getItem('hist87')||'[]');hist.splice(i,1);localStorage.setItem('hist87',JSON.stringify(hist));renderHistory();}
-clearHist.onclick=()=>{localStorage.removeItem('hist87');renderHistory();};
-renderHistory();
+    function updateTimerDisplay() {
+      const m = String(Math.floor(seconds / 60)).padStart(2, '0');
+      const s = String(seconds % 60).padStart(2, '0');
+      document.getElementById("timerDisplay").innerText = `${m}:${s}`;
+    }
+    function startTimer() {
+      if (timerInterval) return;
+      timerInterval = setInterval(() => {
+        seconds++;
+        updateTimerDisplay();
+      }, 1000);
+    }
+    function pauseTimer() {
+      clearInterval(timerInterval);
+      timerInterval = null;
+    }
+    function resetTimer() {
+      pauseTimer();
+      seconds = 0;
+      updateTimerDisplay();
+    }
 
-// Cari Buku (Google Books API)
-btnCari.onclick=async()=>{
-  const term=q.value.trim();
-  if(!term) return;
-  results.innerHTML='Mencari...';
-  const res=await fetch(`https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(term)}`);
-  const data=await res.json();
-  let html='';
-  if(data.items){
-    data.items.forEach(it=>{
-      const title=it.volumeInfo.title;
-      let link=null;
-      if(it.accessInfo && it.accessInfo.pdf && it.accessInfo.pdf.isAvailable && it.accessInfo.pdf.acsTokenLink){
-        link=it.accessInfo.pdf.acsTokenLink;
-      } else if(it.accessInfo && it.accessInfo.webReaderLink){
-        link=it.accessInfo.webReaderLink;
-      }
-      if(link){
-        html+=`<div class="item"><div><b>${title}</b></div>
-        <div><button onclick="baca('${encodeURIComponent(link)}','${title.replace(/'/g,'&#39;')}')">Baca</button>
-        <a href="${link}" target="_blank">Buka</a></div></div>`;
-      }
-    });
-  }
-  results.innerHTML=html||'Tidak ada hasil.';
-};
+    function saveHistory(title) {
+      const list = document.getElementById("historyList");
+      const li = document.createElement("li");
+      const now = new Date();
+      li.textContent = `${title} - ${now.toLocaleString()}`;
+      list.appendChild(li);
+    }
 
-function baca(encUrl,title){
-  const url=decodeURIComponent(encUrl);
-  currentBook=title;
-  pdfViewer.src=`https://docs.google.com/gview?embedded=true&url=${encodeURIComponent(url)}`;
+    async function searchBooks() {
+      const q = document.getElementById("searchInput").value;
+      const res = await fetch(`https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(q)}&maxResults=10`);
+      const data = await res.json();
+      const results = document.getElementById("results");
+      results.innerHTML = "";
+
+      data.items.forEach(it => {
+        const pdfLink = it.accessInfo?.pdf?.downloadLink;
+        if (pdfLink) {
+          const div = document.createElement("div");
+          div.className = "book-item";
+          div.innerHTML = `
+            <span><b>${it.volumeInfo.title}</b></span>
+            <span>
+              <button onclick="showBook('${it.volumeInfo.title}','${pdfLink}')">Baca</button>
+              <a href="${pdfLink}" target="_blank">Buka</a>
+            </span>
+          `;
+          results.appendChild(div);
+        }
+      });
+    }
+
+    function showBook(title, url) {
+      const viewer = document.getElementById("pdfViewer");
+      viewer.src = `https://docs.google.com/gview?embedded=true&url=${encodeURIComponent(url)}`;
+      saveHistory(title);
+    }
+  </script>
+</body>
+</html>  pdfViewer.src=`https://docs.google.com/gview?embedded=true&url=${encodeURIComponent(url)}`;
 }
 </script>
 </body>
