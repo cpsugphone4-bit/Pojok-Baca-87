@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "name": "aktivitas-membaca-images",
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
+    }
+  ]
+}
