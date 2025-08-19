@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Aktifitas Membaca</title>
+<meta name="description" content="Halaman aktivitas membaca dengan tombol akses cepat dan timer bawaan.">
+<link rel="icon" href="data:,">
+<style>
+    body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #f4f4f4; color: #333; }
+    header { background: #4CAF50; color: white; padding: 15px; text-align: center; font-size: 24px; }
+    .top-controls { display:flex; justify-content:center; gap:12px; flex-wrap:wrap; margin: 12px; }
+    .link-btn { display: inline-block; background: #2196F3; color: white; padding: 10px 16px; border-radius: 8px; text-decoration: none; font-weight: bold; transition: background 0.3s; cursor: pointer; border: none; }
+    .link-btn:hover { background: #0b7dda; }
+    .timer-container { background: white; margin: 15px; padding: 15px; border-radius: 10px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+    .timer-display { font-size: 40px; font-weight: bold; margin-bottom: 15px; }
+    .control-btn { padding: 10px 15px; margin: 5px; border: none; border-radius: 8px; background: #4CAF50; color: white; font-size: 16px; cursor: pointer; }
+    .control-btn:hover { background: #45a049; }
+    .gallery { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; padding: 15px; }
+    .card { width: 260px; background: #fff; border-radius: 10px; overflow: hidden; box-shadow: 0 3px 8px rgba(0,0,0,0.08); text-align: center; }
+    .card img { width: 100%; height: 180px; object-fit: cover; display:block; cursor: pointer; transition: transform 0.3s ease; }
+    .card img:hover { transform: scale(1.03); }
+    .card .caption { padding: 10px; font-weight: bold; }
+    .highlight { outline: 4px solid #ffd54f; transform: translateY(-4px); }
+    @media (max-width:520px){ .card { width: 90%; } }
+</style>
+</head>
+<body>
+<header>Aktifitas Membaca</header>
+<div class="top-controls">
+    <a href="https://budi.kemendikdasmen.go.id/" target="_blank" class="link-btn">📚 Kunjungi Pojok Budi</a>
+    <button class="link-btn" onclick="openActivity(1)">▶ Aktifitas Membaca 1</button>
+    <button class="link-btn" onclick="openActivity(2)">▶ Aktifitas Membaca 2</button>
+</div>
+<div class="timer-container">
+    <h2>⏳ Timer Aktifitas Membaca</h2>
+    <div class="timer-display" id="timer">00:00</div>
+    <div>
+        <button class="control-btn" onclick="startTimer()">Mulai</button>
+        <button class="control-btn" onclick="pauseTimer()">Jeda</button>
+        <button class="control-btn" onclick="resetTimer()">Reset</button>
+    </div>
+</div>
+<div class="gallery" id="gallery">
+    <div class="card" id="card-1">
+        <a href="https://drive.google.com/file/d/1kfOqmDoMbqkHqX1y9wNtH-8iQWLmemeh/view" target="_blank" rel="noopener">
+            <img src="https://drive.google.com/uc?export=view&id=1kfOqmDoMbqkHqX1y9wNtH-8iQWLmemeh" alt="Aktifitas Membaca 1" />
+        </a>
+        <div class="caption">Aktifitas Membaca 1</div>
+    </div>
+    <div class="card" id="card-2">
+        <a href="https://drive.google.com/file/d/1kYuWvnHBQedIHBT-Lr8ly2QwcNuz0GHo/view" target="_blank" rel="noopener">
+            <img src="https://drive.google.com/uc?export=view&id=1kYuWvnHBQedIHBT-Lr8ly2QwcNuz0GHo" alt="Aktifitas Membaca 2" />
+        </a>
+        <div class="caption">Aktifitas Membaca 2</div>
+    </div>
+</div>
+<script>
+let timerInterval; let seconds = 0; let isRunning = false;
+function updateDisplay(){ let mins = String(Math.floor(seconds / 60)).padStart(2,'0'); let secs = String(seconds % 60).padStart(2,'0'); document.getElementById('timer').textContent = `${mins}:${secs}`; }
+function startTimer(){ if(!isRunning){ isRunning = true; timerInterval = setInterval(()=>{ seconds++; updateDisplay(); },1000); } }
+function pauseTimer(){ clearInterval(timerInterval); isRunning = false; }
+function resetTimer(){ clearInterval(timerInterval); isRunning = false; seconds = 0; updateDisplay(); }
+const activityLinks = { 1: "https://drive.google.com/file/d/1kfOqmDoMbqkHqX1y9wNtH-8iQWLmemeh/view", 2: "https://drive.google.com/file/d/1kYuWvnHBQedIHBT-Lr8ly2QwcNuz0GHo/view" };
+function openActivity(index){ const card = document.getElementById(`card-${index}`); if(card){ card.scrollIntoView({ behavior:'smooth', block:'center' }); card.classList.add('highlight'); setTimeout(()=>card.classList.remove('highlight'),1200); } const url = activityLinks[index]; if(url){ window.open(url,'_blank','noopener'); } startTimer(); }
+updateDisplay();
+</script>
+</body>
+</html>
