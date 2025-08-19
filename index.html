@@ -1,225 +1,201 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Pojok Baca 87</title>
   <style>
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      margin: 0;
-      background: #f4fbff;
-      color: #333;
+    :root{
+      --brand:#00bfa5; --brand-2:#1de9b6; --ink:#0f172a;
+      --muted:#64748b; --paper:#ffffff; --card:#f8fafc;
+      --line:#e5e7eb; --accent:#2563eb; --warn:#f97316;
     }
-    header {
-      background: linear-gradient(90deg, #00bfa5, #1de9b6);
-      color: white;
-      padding: 1rem;
-      text-align: center;
-      font-size: 1.5rem;
-      font-weight: bold;
-      box-shadow: 0 3px 8px rgba(0,0,0,0.2);
-    }
-    main {
-      padding: 20px;
-      max-width: 1000px;
-      margin: auto;
-    }
-    h2 {
-      border-left: 5px solid #00bfa5;
-      padding-left: 10px;
-      color: #00796b;
-    }
-    .search-box {
-      display: flex;
-      margin-bottom: 20px;
-    }
-    .search-box input {
-      flex: 1;
-      padding: 10px;
-      border: 2px solid #00bfa5;
-      border-radius: 8px 0 0 8px;
-      outline: none;
-    }
-    .search-box button {
-      background: #00bfa5;
-      border: none;
-      color: white;
-      padding: 10px 15px;
-      border-radius: 0 8px 8px 0;
-      cursor: pointer;
-    }
-    .search-box button:hover {
-      background: #00796b;
-    }
-    .book-item {
-      background: white;
-      padding: 15px;
-      margin: 10px 0;
-      border-radius: 10px;
-      box-shadow: 0 3px 6px rgba(0,0,0,0.1);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .book-item button, .book-item a {
-      margin-left: 10px;
-      padding: 6px 12px;
-      border-radius: 6px;
-      border: none;
-      cursor: pointer;
-    }
-    .book-item button {
-      background: #00bfa5;
-      color: white;
-    }
-    .book-item a {
-      background: #e0f7fa;
-      color: #00796b;
-      text-decoration: none;
-    }
-    iframe {
-      width: 100%;
-      height: 500px;
-      border: none;
-      margin-top: 20px;
-      border-radius: 10px;
-      box-shadow: 0 3px 8px rgba(0,0,0,0.2);
-    }
-    .timer, .history, .gallery {
-      background: white;
-      padding: 15px;
-      border-radius: 10px;
-      box-shadow: 0 3px 6px rgba(0,0,0,0.1);
-      margin: 20px 0;
-    }
-    .timer button {
-      margin: 5px;
-      padding: 8px 14px;
-      border-radius: 8px;
-      border: none;
-      cursor: pointer;
-      background: #00bfa5;
-      color: white;
-    }
-    .gallery-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px,1fr));
-      gap: 10px;
-    }
-    .gallery-grid img {
-      width: 100%;
-      border-radius: 8px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-      transition: transform 0.3s;
-    }
-    .gallery-grid img:hover {
-      transform: scale(1.05);
-    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:system-ui,Segoe UI,Roboto,Arial,sans-serif;background:linear-gradient(180deg,#f4fbff 0%,#ffffff 100%);color:var(--ink)}
+    header{background:linear-gradient(90deg,var(--brand),var(--brand-2));color:#fff;padding:16px;text-align:center;box-shadow:0 6px 18px rgba(0,0,0,.12)}
+    header h1{margin:0;font-size:22px;letter-spacing:.3px}
+    main{max-width:1100px;margin:24px auto;padding:0 16px}
+
+    .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin:16px 0;box-shadow:0 8px 20px rgba(2,8,23,.06)}
+    h2{margin:0 0 10px 0;color:#0b6b61;border-left:6px solid var(--brand);padding-left:10px}
+
+    .search-row{display:flex;gap:8px;flex-wrap:wrap}
+    .input{flex:1;min-width:240px;padding:12px 14px;border:2px solid #c7f5ee;background:#fff;border-radius:10px;outline:none}
+    .btn{padding:10px 14px;border:0;border-radius:10px;cursor:pointer;font-weight:600}
+    .btn.primary{background:var(--brand);color:#fff}
+    .btn.primary:hover{filter:brightness(.95)}
+    .btn.link{background:#e0f7fa;color:#00695c}
+    .btn.ghost{background:#eef2ff;color:#1e40af}
+    .btn.warn{background:var(--warn);color:#fff}
+
+    .results{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin-top:12px}
+    .book{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:10px;box-shadow:0 4px 12px rgba(2,8,23,.06);transition:transform .15s ease}
+    .book:hover{transform:translateY(-2px)}
+    .title{font-weight:700;color:#0f172a}
+    .meta{font-size:.9rem;color:var(--muted)}
+    .actions{display:flex;gap:8px;flex-wrap:wrap}
+
+    #pdfViewer{width:100%;height:68vh;border:0;border-radius:12px;background:#fff;box-shadow:0 8px 16px rgba(2,8,23,.08);display:none}
+
+    .timer-wrap{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+    #timerDisplay{font-size:28px;font-weight:800;letter-spacing:.5px}
+
+    .history ul{margin:0;padding-left:18px}
+    .history li{margin:6px 0}
+
+    .gallery-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+    .gallery-grid img{width:100%;height:220px;object-fit:cover;border-radius:14px;box-shadow:0 6px 16px rgba(2,8,23,.12);transition:transform .25s ease}
+    .gallery-grid img:hover{transform:scale(1.03)}
+    .note{color:var(--muted);font-size:.92rem}
+    .badge{display:inline-block;padding:2px 8px;border-radius:999px;font-size:.75rem;background:#fff0d6;color:#9a5b00;border:1px solid #ffd89a}
+    .empty{padding:14px;border:1px dashed var(--line);border-radius:10px;background:#fff}
   </style>
 </head>
 <body>
-  <header>📚 Pojok Baca 87</header>
+  <header><h1>📚 Pojok Baca 87</h1></header>
   <main>
-    <section>
-      <h2>Pencarian Buku</h2>
-      <div class="search-box">
-        <input type="text" id="searchInput" placeholder="Cari buku...">
-        <button onclick="searchBooks()">Cari</button>
+
+    <!-- Cari Buku -->
+    <section class="card">
+      <h2>🔎 Pencarian Buku (Google Books)</h2>
+      <div class="search-row">
+        <input id="q" class="input" placeholder="Contoh: Matematika Kelas 7, IPA Kurikulum Merdeka…" />
+        <button id="btnCari" class="btn primary">Cari</button>
       </div>
-      <div id="results"></div>
-      <iframe id="pdfViewer"></iframe>
+      <div id="hint" class="note" style="margin-top:8px">
+        *Daftar di bawah menampilkan semua hasil. Tombol <b>Baca</b>/<b>Buka</b> hanya muncul jika PDF tersedia.
+      </div>
+      <div id="results" class="results" style="margin-top:10px"></div>
+
+      <div class="card" style="margin-top:16px">
+        <div class="note" style="margin-bottom:8px">📖 Viewer</div>
+        <iframe id="pdfViewer"></iframe>
+        <div id="viewerEmpty" class="empty"><span class="badge">Info</span> Pilih <b>Baca</b> pada buku yang memiliki PDF untuk menampilkan isi di sini.</div>
+      </div>
     </section>
 
-    <section class="timer">
-      <h2>⏱ Timer Membaca</h2>
-      <div id="timerDisplay">00:00</div>
-      <button onclick="startTimer()">Mulai</button>
-      <button onclick="pauseTimer()">Jeda</button>
-      <button onclick="resetTimer()">Reset</button>
+    <!-- Timer -->
+    <section class="card">
+      <h2>⏱️ Timer Membaca</h2>
+      <div class="timer-wrap">
+        <div id="timerDisplay">00:00</div>
+        <button id="tStart" class="btn ghost">Mulai</button>
+        <button id="tPause" class="btn ghost">Jeda</button>
+        <button id="tStop" class="btn warn">Stop & Simpan</button>
+      </div>
+      <div class="note" style="margin-top:6px">Timer menyimpan riwayat ke perangkat kamu (localStorage).</div>
     </section>
 
-    <section class="history">
+    <!-- Riwayat -->
+    <section class="card history">
       <h2>📜 Riwayat Membaca</h2>
       <ul id="historyList"></ul>
+      <div style="margin-top:10px">
+        <button id="clearHist" class="btn warn">Hapus Semua</button>
+      </div>
     </section>
 
-    <section class="gallery">
-      <h2>🖼 Gallery Pojok Baca</h2>
+    <!-- Gallery -->
+    <section class="card">
+      <h2>🖼️ Gallery Pojok Baca</h2>
       <div class="gallery-grid">
-        <img src="https://i.postimg.cc/JhP0HkX2/20250819-123403.jpg" alt="Rak Buku">
-        <img src="https://i.postimg.cc/tR1dyqQj/20250819-123536.jpg" alt="Sudut Membaca">
+        <img src="https://i.postimg.cc/JhP0HkX2/20250819-123403.jpg" alt="Pojok Baca 1" />
+        <img src="https://i.postimg.cc/tR1dyqQj/20250819-123536.jpg" alt="Pojok Baca 2" />
       </div>
     </section>
   </main>
 
   <script>
-    let timerInterval;
-    let seconds = 0;
+    // ---------- Timer ----------
+    let timer = null, secs = 0, currentTitle = "(Tanpa Judul)";
+    const disp = document.getElementById('timerDisplay');
+    function fmt(n){return String(n).padStart(2,'0')}
+    function showTime(){disp.textContent = `${fmt(Math.floor(secs/60))}:${fmt(secs%60)}`}
 
-    function updateTimerDisplay() {
-      const m = String(Math.floor(seconds / 60)).padStart(2, '0');
-      const s = String(seconds % 60).padStart(2, '0');
-      document.getElementById("timerDisplay").innerText = `${m}:${s}`;
-    }
-    function startTimer() {
-      if (timerInterval) return;
-      timerInterval = setInterval(() => {
-        seconds++;
-        updateTimerDisplay();
-      }, 1000);
-    }
-    function pauseTimer() {
-      clearInterval(timerInterval);
-      timerInterval = null;
-    }
-    function resetTimer() {
-      pauseTimer();
-      seconds = 0;
-      updateTimerDisplay();
-    }
+    document.getElementById('tStart').onclick = () => {
+      if (timer) return;
+      timer = setInterval(() => { secs++; showTime(); }, 1000);
+    };
+    document.getElementById('tPause').onclick = () => { clearInterval(timer); timer = null; };
+    document.getElementById('tStop').onclick = () => {
+      clearInterval(timer); timer = null;
+      const at = new Date().toLocaleString('id-ID');
+      const hist = JSON.parse(localStorage.getItem('hist87') || '[]');
+      hist.push({ title: currentTitle, dur: secs, at });
+      localStorage.setItem('hist87', JSON.stringify(hist));
+      secs = 0; showTime(); renderHistory();
+    };
 
-    function saveHistory(title) {
-      const list = document.getElementById("historyList");
-      const li = document.createElement("li");
-      const now = new Date();
-      li.textContent = `${title} - ${now.toLocaleString()}`;
-      list.appendChild(li);
+    function renderHistory(){
+      const ul = document.getElementById('historyList');
+      const hist = JSON.parse(localStorage.getItem('hist87') || '[]');
+      ul.innerHTML = hist.length
+        ? hist.map((x,i)=>`<li>${x.title} — ${Math.floor(x.dur/60)}m ${x.dur%60}s <span class="note">(${x.at})</span> <button class="btn link" onclick="delHist(${i})">Hapus</button></li>`).join('')
+        : '<li class="note">Belum ada riwayat.</li>';
     }
+    function delHist(i){
+      const hist = JSON.parse(localStorage.getItem('hist87') || '[]');
+      hist.splice(i,1);
+      localStorage.setItem('hist87', JSON.stringify(hist));
+      renderHistory();
+    }
+    document.getElementById('clearHist').onclick = () => { localStorage.removeItem('hist87'); renderHistory(); };
+    renderHistory();
 
-    async function searchBooks() {
-      const q = document.getElementById("searchInput").value;
-      const res = await fetch(`https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(q)}&maxResults=10`);
-      const data = await res.json();
-      const results = document.getElementById("results");
-      results.innerHTML = "";
+    // ---------- Pencarian Buku (Google Books) ----------
+    const resultsEl = document.getElementById('results');
+    const viewer = document.getElementById('pdfViewer');
+    const viewerEmpty = document.getElementById('viewerEmpty');
 
-      data.items.forEach(it => {
-        const pdfLink = it.accessInfo?.pdf?.downloadLink;
-        if (pdfLink) {
-          const div = document.createElement("div");
-          div.className = "book-item";
-          div.innerHTML = `
-            <span><b>${it.volumeInfo.title}</b></span>
-            <span>
-              <button onclick="showBook('${it.volumeInfo.title}','${pdfLink}')">Baca</button>
-              <a href="${pdfLink}" target="_blank">Buka</a>
-            </span>
+    document.getElementById('btnCari').onclick = doSearch;
+    document.getElementById('q').addEventListener('keydown', e => { if(e.key==='Enter') doSearch(); });
+
+    async function doSearch(){
+      const q = document.getElementById('q').value.trim();
+      if(!q){ resultsEl.innerHTML = '<div class="empty">Ketik kata kunci dulu…</div>'; return; }
+      resultsEl.innerHTML = '<div class="empty">Mencari…</div>';
+      try{
+        const r = await fetch(`https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(q)}&maxResults=20`);
+        const data = await r.json();
+        const items = Array.isArray(data.items) ? data.items : [];
+        if(!items.length){ resultsEl.innerHTML = '<div class="empty">Tidak ada hasil.</div>'; return; }
+
+        // render semua buku, tombol hanya jika ada PDF
+        resultsEl.innerHTML = '';
+        items.forEach(it=>{
+          const title = (it.volumeInfo?.title || 'Tanpa Judul').replace(/"/g,'&quot;').replace(/</g,'&lt;');
+          const authors = (it.volumeInfo?.authors || []).join(', ');
+          const year = it.volumeInfo?.publishedDate ? (it.volumeInfo.publishedDate.slice(0,4)) : '';
+          const pdfLink = it.accessInfo?.pdf?.downloadLink || it.accessInfo?.pdf?.acsTokenLink || '';
+
+          const card = document.createElement('div');
+          card.className = 'book';
+          card.innerHTML = `
+            <div class="title">${title}</div>
+            <div class="meta">${authors ? authors+' • ' : ''}${year}</div>
+            <div class="actions">
+              ${pdfLink
+                ? `<button class="btn primary" onclick="bacaPDF('${encodeURIComponent(pdfLink)}','${title}')">Baca</button>
+                   <a class="btn link" href="${pdfLink}" target="_blank" rel="noopener">Buka</a>`
+                : `<span class="note">Tidak tersedia PDF</span>`
+              }
+            </div>
           `;
-          results.appendChild(div);
-        }
-      });
+          resultsEl.appendChild(card);
+        });
+      }catch(err){
+        resultsEl.innerHTML = '<div class="empty">Gagal memuat hasil. Coba lagi.</div>';
+      }
     }
 
-    function showBook(title, url) {
-      const viewer = document.getElementById("pdfViewer");
+    // tampilkan PDF via Google Docs Viewer (untuk HP juga aman)
+    function bacaPDF(encUrl, title){
+      const url = decodeURIComponent(encUrl);
+      viewer.style.display = 'block';
       viewer.src = `https://docs.google.com/gview?embedded=true&url=${encodeURIComponent(url)}`;
-      saveHistory(title);
+      viewerEmpty.style.display = 'none';
+      currentTitle = title;
     }
   </script>
-</body>
-</html>  pdfViewer.src=`https://docs.google.com/gview?embedded=true&url=${encodeURIComponent(url)}`;
-}
-</script>
 </body>
 </html>
