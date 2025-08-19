@@ -5,12 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
 <title>📚 Pojok Baca 87</title>
 <style>
-:root{--bg:#0b1220;--fg:#e5e7eb;--muted:#94a3b8;--card:#111827;--primary:#60a5fa;--accent:#22c55e;--warn:#f97316;}
+:root{--bg:#0b1220;--fg:#e5e7eb;--card:#111827;--primary:#2563eb;--accent:#22c55e;--warn:#f97316;}
 body{margin:0;font-family:sans-serif;background:#0b1220;color:var(--fg);}
-header{background:#111827;padding:14px;display:flex;justify-content:center}
-header h1{margin:0;font-size:18px}
+header{background:#111827;padding:14px;text-align:center}
+header h1{margin:0;font-size:20px}
 .container{max-width:1000px;margin:0 auto;padding:16px}
-.tabbar{display:flex;gap:8px;margin-bottom:12px}
+.tabbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;justify-content:center}
 .btn{padding:8px 12px;border-radius:6px;border:1px solid #223046;background:#1e293b;color:#fff;cursor:pointer}
 .btn.accent{background:#22c55e}.btn.primary{background:#2563eb}.btn.warn{background:#f97316}
 .section{display:none}.section.active{display:block}
@@ -18,7 +18,7 @@ header h1{margin:0;font-size:18px}
 .card{background:#111827;padding:12px;border-radius:12px;margin-bottom:12px}
 .results{max-height:350px;overflow:auto}
 .item{padding:8px;border-bottom:1px solid #223046;display:flex;justify-content:space-between;align-items:center}
-.viewer{width:100%;height:70vh;border:0;border-radius:8px;display:none}
+#pdfViewer{width:100%;height:70vh;border:0;border-radius:8px}
 .gallery{display:flex;overflow-x:auto;gap:10px}
 .gallery img{height:170px;border-radius:10px}
 .history li{margin:6px 0}
@@ -33,14 +33,18 @@ header h1{margin:0;font-size:18px}
     <button class="btn" data-tab="riwayat">📜 Riwayat</button>
     <button class="btn" data-tab="galeri">🖼 Gallery</button>
   </div>
+
+  <!-- Cari Buku -->
   <section id="buku" class="section active">
     <div class="card">
       <input id="q" class="input" placeholder="Contoh: Matematika Kelas 7"/>
       <button id="btnCari" class="btn accent">Cari</button>
       <div id="results" class="results"></div>
-      <iframe id="pdfFrame" class="viewer"></iframe>
+      <iframe id="pdfViewer"></iframe>
     </div>
   </section>
+
+  <!-- Timer -->
   <section id="timer" class="section">
     <div class="card">
       <div id="timeDisp" style="font-size:30px;font-weight:700">00:00</div>
@@ -49,12 +53,16 @@ header h1{margin:0;font-size:18px}
       <button id="tStop" class="btn warn">Stop & Simpan</button>
     </div>
   </section>
+
+  <!-- Riwayat -->
   <section id="riwayat" class="section">
     <div class="card">
       <ul id="history" class="history"></ul>
       <button id="clearHist" class="btn warn">Hapus Semua</button>
     </div>
   </section>
+
+  <!-- Gallery -->
   <section id="galeri" class="section">
     <div class="card gallery">
       <img src="https://i.postimg.cc/JhP0HkX2/20250819-123403.jpg" alt="gambar1">
@@ -62,15 +70,59 @@ header h1{margin:0;font-size:18px}
     </div>
   </section>
 </div>
+
 <script>
-document.querySelectorAll('[data-tab]').forEach(btn=>{btn.onclick=()=>{document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));document.getElementById(btn.dataset.tab).classList.add('active');};});
-let timer=null,secs=0,currentBook='(Tanpa Judul)';function showTime(){let m=Math.floor(secs/60),s=secs%60;document.getElementById('timeDisp').textContent=`${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;}
-tStart.onclick=()=>{if(!timer){timer=setInterval(()=>{secs++;showTime();},1000);}};tPause.onclick=()=>{clearInterval(timer);timer=null;};tStop.onclick=()=>{clearInterval(timer);timer=null;let now=new Date().toLocaleString('id-ID');let hist=JSON.parse(localStorage.getItem('hist87')||'[]');hist.push({title:currentBook,dur:secs,at:now});localStorage.setItem('hist87',JSON.stringify(hist));secs=0;showTime();renderHistory();};
+// Tab switching
+document.querySelectorAll('[data-tab]').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+    document.getElementById(btn.dataset.tab).classList.add('active');
+  });
+});
+
+// Timer
+let timer=null, secs=0, currentBook='(Tanpa Judul)';
+function showTime(){let m=Math.floor(secs/60),s=secs%60;document.getElementById('timeDisp').textContent=`${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;}
+tStart.onclick=()=>{if(!timer){timer=setInterval(()=>{secs++;showTime();},1000);}};
+tPause.onclick=()=>{clearInterval(timer);timer=null;};
+tStop.onclick=()=>{clearInterval(timer);timer=null;let now=new Date().toLocaleString('id-ID');let hist=JSON.parse(localStorage.getItem('hist87')||'[]');hist.push({title:currentBook,dur:secs,at:now});localStorage.setItem('hist87',JSON.stringify(hist));secs=0;showTime();renderHistory();};
 function renderHistory(){let hist=JSON.parse(localStorage.getItem('hist87')||'[]');history.innerHTML=hist.map((x,i)=>`<li>${x.title} — ${Math.floor(x.dur/60)}m ${x.dur%60}s (${x.at}) <button onclick="delHist(${i})">❌</button></li>`).join('')||'Belum ada riwayat';}
 function delHist(i){let hist=JSON.parse(localStorage.getItem('hist87')||'[]');hist.splice(i,1);localStorage.setItem('hist87',JSON.stringify(hist));renderHistory();}
 clearHist.onclick=()=>{localStorage.removeItem('hist87');renderHistory();};renderHistory();
-btnCari.onclick=async()=>{const term=q.value.trim();if(!term)return;results.innerHTML='Mencari...';const res=await fetch('/api/bse?q='+encodeURIComponent(term));const data=await res.json();let html='';if(data.items&&data.items.length>0){data.items.forEach(it=>{html+=`<div class="item"><div><b>${it.title}</b></div><div><button onclick="baca('${encodeURIComponent(it.link)}','${it.title.replace(/'/g,'&#39;')}')">Baca</button> <a href="${it.link}" target="_blank">Buka</a></div></div>`;});}else{html='Tidak ada hasil.';}results.innerHTML=html;};
-function baca(encUrl,title){const url=decodeURIComponent(encUrl);currentBook=title;pdfFrame.src=url;pdfFrame.style.display='block';}
+
+// Cari Buku (pakai Google Books API)
+btnCari.onclick=async()=>{
+  const term=q.value.trim();
+  if(!term) return;
+  results.innerHTML='Mencari...';
+  const res=await fetch(`https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(term)}`);
+  const data=await res.json();
+  let html='';
+  if(data.items){
+    data.items.forEach(it=>{
+      const title=it.volumeInfo.title;
+      let link=null;
+      if(it.accessInfo && it.accessInfo.pdf && it.accessInfo.pdf.isAvailable && it.accessInfo.pdf.acsTokenLink){
+        link=it.accessInfo.pdf.acsTokenLink;
+      } else if(it.accessInfo && it.accessInfo.webReaderLink){
+        link=it.accessInfo.webReaderLink;
+      }
+      if(link){
+        html+=`<div class="item"><div><b>${title}</b></div>
+        <div><button onclick="baca('${encodeURIComponent(link)}','${title.replace(/'/g,'&#39;')}')">Baca</button>
+        <a href="${link}" target="_blank">Buka</a></div></div>`;
+      }
+    });
+  }
+  results.innerHTML=html||'Tidak ada hasil.';
+};
+
+function baca(encUrl,title){
+  const url=decodeURIComponent(encUrl);
+  currentBook=title;
+  const frame=document.getElementById('pdfViewer');
+  frame.src=`https://docs.google.com/gview?embedded=true&url=${encodeURIComponent(url)}`;
+}
 </script>
 </body>
 </html>
