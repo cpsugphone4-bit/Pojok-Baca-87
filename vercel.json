@@ -1,9 +1,9 @@
 {
   "version": 2,
-  "name": "pojok-baca-87-kemdikbud-sibi-only",
+  "name": "pojok-baca-87-bse-only",
   "builds": [
     {
-      "src": "api/sibi.js",
+      "src": "api/bse.js",
       "use": "@vercel/node"
     },
     {
@@ -13,8 +13,8 @@
   ],
   "routes": [
     {
-      "src": "/api/sibi",
-      "dest": "/api/sibi.js"
+      "src": "/api/bse",
+      "dest": "/api/bse.js"
     },
     {
       "src": "/(.*)",
