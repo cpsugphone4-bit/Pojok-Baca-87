@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Aktifitas Membaca</title>
+<meta name="description" content="Halaman aktivitas membaca dengan carousel gallery dan timer.">
+<link rel="icon" href="data:,">
+<style>
+    body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #f4f4f4; color: #333; }
+    header { background: #4CAF50; color: white; padding: 15px; text-align: center; font-size: 24px; }
+    .top-controls { display:flex; justify-content:center; gap:12px; flex-wrap:wrap; margin: 12px; }
+    .link-btn { display: inline-block; background: #2196F3; color: white; padding: 10px 16px; border-radius: 8px; text-decoration: none; font-weight: bold; transition: background 0.3s; cursor: pointer; border: none; }
+    .link-btn:hover { background: #0b7dda; }
+    .timer-container { background: white; margin: 15px; padding: 15px; border-radius: 10px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+    .timer-display { font-size: 40px; font-weight: bold; margin-bottom: 15px; }
+    .control-btn { padding: 10px 15px; margin: 5px; border: none; border-radius: 8px; background: #4CAF50; color: white; font-size: 16px; cursor: pointer; }
+    .control-btn:hover { background: #45a049; }
+    /* Carousel */
+    .carousel { position: relative; max-width: 600px; margin: 20px auto; overflow: hidden; border-radius: 10px; background: #fff; box-shadow: 0 3px 8px rgba(0,0,0,0.08); }
+    .slides { display: flex; transition: transform 0.5s ease-in-out; }
+    .slide { min-width: 100%; box-sizing: border-box; }
+    .carousel img { width: 100%; height: auto; display: block; }
+    .prev, .next { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.5); color: white; border: none; padding: 10px; cursor: pointer; border-radius: 50%; font-size: 18px; }
+    .prev { left: 10px; }
+    .next { right: 10px; }
+</style>
+</head>
+<body>
+<header>Aktifitas Membaca</header>
+<div class="top-controls">
+    <a href="https://budi.kemendikdasmen.go.id/" target="_blank" class="link-btn">📚 Kunjungi Pojok Budi</a>
+    <button class="link-btn" onclick="openActivity(1)">▶ Aktifitas Membaca 1</button>
+    <button class="link-btn" onclick="openActivity(2)">▶ Aktifitas Membaca 2</button>
+</div>
+<div class="timer-container">
+    <h2>⏳ Timer Aktifitas Membaca</h2>
+    <div class="timer-display" id="timer">00:00</div>
+    <div>
+        <button class="control-btn" onclick="startTimer()">Mulai</button>
+        <button class="control-btn" onclick="pauseTimer()">Jeda</button>
+        <button class="control-btn" onclick="resetTimer()">Reset</button>
+    </div>
+</div>
+
+<!-- Carousel Gallery -->
+<div class="carousel">
+  <div class="slides">
+    <div class="slide">
+      <img src="https://i.postimg.cc/JhP0HkX2/20250819-123403.jpg" alt="Foto Rak Buku">
+    </div>
+    <div class="slide">
+      <img src="https://i.postimg.cc/tR1dyqQj/20250819-123536.jpg" alt="Foto Ruang Baca">
+    </div>
+  </div>
+  <button class="prev" onclick="moveSlide(-1)">❮</button>
+  <button class="next" onclick="moveSlide(1)">❯</button>
+</div>
+
+<script>
+// Timer logic
+let timerInterval; let seconds = 0; let isRunning = false;
+function updateDisplay(){ let mins = String(Math.floor(seconds / 60)).padStart(2,'0'); let secs = String(seconds % 60).padStart(2,'0'); document.getElementById('timer').textContent = `${mins}:${secs}`; }
+function startTimer(){ if(!isRunning){ isRunning = true; timerInterval = setInterval(()=>{ seconds++; updateDisplay(); },1000); } }
+function pauseTimer(){ clearInterval(timerInterval); isRunning = false; }
+function resetTimer(){ clearInterval(timerInterval); isRunning = false; seconds = 0; updateDisplay(); }
+
+// Activity links
+const activityLinks = {
+  1: "https://example.com/aktivitas1",
+  2: "https://example.com/aktivitas2"
+};
+function openActivity(index){ const url = activityLinks[index]; if(url){ window.open(url,'_blank','noopener'); } startTimer(); }
+updateDisplay();
+
+// Carousel logic
+let currentIndex = 0;
+function moveSlide(direction) {
+  const slides = document.querySelector(".slides");
+  const totalSlides = document.querySelectorAll(".slide").length;
+  currentIndex = (currentIndex + direction + totalSlides) % totalSlides;
+  slides.style.transform = `translateX(-${currentIndex * 100}%)`;
+}
+// Auto slide tiap 5 detik
+setInterval(() => moveSlide(1), 5000);
+</script>
+</body>
+</html>
