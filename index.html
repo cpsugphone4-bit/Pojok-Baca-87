@@ -41,21 +41,119 @@
         <button class="control-btn" onclick="resetTimer()">Reset</button>
     </div>
 </div>
-<div class="gallery" id="gallery">
-    <div class="card" id="card-1">
-        <a href="https://drive.google.com/file/d/1kfOqmDoMbqkHqX1y9wNtH-8iQWLmemeh/view" target="_blank" rel="noopener">
-            <img src="https://drive.google.com/uc?export=view&id=1kfOqmDoMbqkHqX1y9wNtH-8iQWLmemeh" alt="Aktifitas Membaca 1" />
-        </a>
-        <div class="caption">Aktifitas Membaca 1</div>
+<div class="carousel">
+  <div class="slides">
+    <div class="slide">
+      <img src="https://drive.google.com/uc?export=view&id=1kfOqmDoMbqkHqX1y9wNtH-8iQWLmemeh" alt="Aktifitas Membaca 1">
     </div>
-    <div class="card" id="card-2">
-        <a href="https://drive.google.com/file/d/1kYuWvnHBQedIHBT-Lr8ly2QwcNuz0GHo/view" target="_blank" rel="noopener">
-            <img src="https://drive.google.com/uc?export=view&id=1kYuWvnHBQedIHBT-Lr8ly2QwcNuz0GHo" alt="Aktifitas Membaca 2" />
-        </a>
-        <div class="caption">Aktifitas Membaca 2</div>
+    <div class="slide">
+      <img src="https://drive.google.com/uc?export=view&id=1kYuWvnHBQedIHBT-Lr8ly2QwcNuz0GHo" alt="Aktifitas Membaca 2">
     </div>
+  </div>
+  <button class="prev" onclick="moveSlide(-1)">❮</button>
+  <button class="next" onclick="moveSlide(1)">❯</button>
 </div>
+
+<style>
+.carousel {
+  position: relative;
+  max-width: 500px;
+  margin: auto;
+  overflow: hidden;
+  border-radius: 10px;
+}
+.slides {
+  display: flex;
+  transition: transform 0.5s ease-in-out;
+}
+.slide {
+  min-width: 100%;
+  box-sizing: border-box;
+}
+.carousel img {
+  width: 100%;
+  border-radius: 10px;
+}
+.prev, .next {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0,0,0,0.5);
+  color: white;
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+  border-radius: 50%;
+}
+.prev { left: 10px; }
+.next { right: 10px; }
+</style>
+
 <script>
+let currentIndex = 0;
+function moveSlide(direction) {
+  const slides = document.querySelector(".slides");
+  const totalSlides = document.querySelectorAll(".slide").length;
+  currentIndex = (currentIndex + direction + totalSlides) % totalSlides;
+  slides.style.transform = `translateX(-${currentIndex * 100}%)`;
+}
+</script><div class="carousel">
+  <div class="slides">
+    <div class="slide">
+      <img src="https://drive.google.com/uc?export=view&id=1kfOqmDoMbqkHqX1y9wNtH-8iQWLmemeh" alt="Aktifitas Membaca 1">
+    </div>
+    <div class="slide">
+      <img src="https://drive.google.com/uc?export=view&id=1kYuWvnHBQedIHBT-Lr8ly2QwcNuz0GHo" alt="Aktifitas Membaca 2">
+    </div>
+  </div>
+  <button class="prev" onclick="moveSlide(-1)">❮</button>
+  <button class="next" onclick="moveSlide(1)">❯</button>
+</div>
+
+<style>
+.carousel {
+  position: relative;
+  max-width: 500px;
+  margin: auto;
+  overflow: hidden;
+  border-radius: 10px;
+}
+.slides {
+  display: flex;
+  transition: transform 0.5s ease-in-out;
+}
+.slide {
+  min-width: 100%;
+  box-sizing: border-box;
+}
+.carousel img {
+  width: 100%;
+  border-radius: 10px;
+}
+.prev, .next {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0,0,0,0.5);
+  color: white;
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+  border-radius: 50%;
+}
+.prev { left: 10px; }
+.next { right: 10px; }
+</style>
+
+<script>
+let currentIndex = 0;
+function moveSlide(direction) {
+  const slides = document.querySelector(".slides");
+  const totalSlides = document.querySelectorAll(".slide").length;
+  currentIndex = (currentIndex + direction + totalSlides) % totalSlides;
+  slides.style.transform = `translateX(-${currentIndex * 100}%)`;
+}
+</script>
 let timerInterval; let seconds = 0; let isRunning = false;
 function updateDisplay(){ let mins = String(Math.floor(seconds / 60)).padStart(2,'0'); let secs = String(seconds % 60).padStart(2,'0'); document.getElementById('timer').textContent = `${mins}:${secs}`; }
 function startTimer(){ if(!isRunning){ isRunning = true; timerInterval = setInterval(()=>{ seconds++; updateDisplay(); },1000); } }
