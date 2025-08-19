@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "name": "aktivitas-membaca-gallery",
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
+    }
+  ]
+}
