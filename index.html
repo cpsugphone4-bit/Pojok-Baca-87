@@ -52,13 +52,13 @@
         <button id="btnCari" class="btn primary">Cari</button>
       </div>
       <div id="hint" class="note" style="margin-top:8px">
-        *Tombol <b>Baca</b>/<b>Buka</b> hanya muncul jika ada PDF asli.
+        *Buku dengan PDF asli muncul paling atas.
       </div>
       <div id="results" class="results"></div>
 
       <div class="card" style="margin-top:16px">
         <iframe id="pdfViewer"></iframe>
-        <div id="viewerEmpty" class="empty">📖 Pilih <b>Baca</b> pada buku yang memiliki PDF.</div>
+        <div id="viewerEmpty" class="empty">📖 Pilih <b>Baca</b> pada buku dengan PDF asli.</div>
       </div>
     </section>
 
@@ -94,21 +94,91 @@
 
   <script>
     // ---------- Timer ----------
-    let timer = null, secs = 0, currentTitle = "(Tanpa Judul)";
-    const disp = document.getElementById('timerDisplay');
+    let timer=null, secs=0, currentTitle="(Tanpa Judul)";
+    const disp=document.getElementById('timerDisplay');
     function fmt(n){return String(n).padStart(2,'0')}
-    function showTime(){disp.textContent = `${fmt(Math.floor(secs/60))}:${fmt(secs%60)}`}
-    document.getElementById('tStart').onclick = () => { if (!timer) timer=setInterval(()=>{secs++;showTime();},1000); };
-    document.getElementById('tPause').onclick = () => { clearInterval(timer); timer=null; };
-    document.getElementById('tStop').onclick = () => {
-      clearInterval(timer); timer=null;
-      const at = new Date().toLocaleString('id-ID');
-      const hist = JSON.parse(localStorage.getItem('hist87')||'[]');
-      hist.push({ title: currentTitle, dur: secs, at });
-      localStorage.setItem('hist87', JSON.stringify(hist));
-      secs=0; showTime(); renderHistory();
-    };
-    function renderHistory(){
+    function showTime(){disp.textContent=`${fmt(Math.floor(secs/60))}:${fmt(secs%60)}`}
+    document.getElementById('tStart').onclick=()=>{if(!timer)timer=setInterval(()=>{secs++;showTime();},1000)};
+    document.getElementById('tPause').onclick=()=>{clearInterval(timer);timer=null};
+    document.getElementById('tStop').onclick=()=>{clearInterval(timer);timer=null;const at=new Date().toLocaleString('id-ID');const hist=JSON.parse(localStorage.getItem('hist87')||'[]');hist.push({title:currentTitle,dur:secs,at});localStorage.setItem('hist87',JSON.stringify(hist));secs=0;showTime();renderHistory()};
+    function renderHistory(){const ul=document.getElementById('historyList');const hist=JSON.parse(localStorage.getItem('hist87')||'[]');ul.innerHTML=hist.length?hist.map((x,i)=>`<li>${x.title} — ${Math.floor(x.dur/60)}m ${x.dur%60}s <span class="note">(${x.at})</span> <button class="btn link" onclick="delHist(${i})">Hapus</button></li>`).join(''):'<li class="note">Belum ada riwayat.</li>'}
+    function delHist(i){const hist=JSON.parse(localStorage.getItem('hist87')||'[]');hist.splice(i,1);localStorage.setItem('hist87',JSON.stringify(hist));renderHistory()}
+    document.getElementById('clearHist').onclick=()=>{localStorage.removeItem('hist87');renderHistory()};
+    renderHistory();
+
+    // ---------- Pencarian Buku ----------
+    const resultsEl=document.getElementById('results');
+    const viewer=document.getElementById('pdfViewer');
+    const viewerEmpty=document.getElementById('viewerEmpty');
+    document.getElementById('btnCari').onclick=doSearch;
+    document.getElementById('q').addEventListener('keydown',e=>{if(e.key==='Enter')doSearch()});
+
+    async function doSearch(){
+      const q=document.getElementById('q').value.trim();
+      if(!q){resultsEl.innerHTML='<div class="empty">Ketik kata kunci dulu…</div>';return;}
+      resultsEl.innerHTML='<div class="empty">Mencari…</div>';
+      try{
+        const r=await fetch(`https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(q)}&maxResults=20`);
+        const data=await r.json();
+        const items=Array.isArray(data.items)?data.items:[];
+        if(!items.length){resultsEl.innerHTML='<div class="empty">Tidak ada hasil.</div>';return;}
+
+        // pisahkan yang ada PDF dan tidak
+        const withPDF=[], noPDF=[];
+        items.forEach(it=>{
+          const title=(it.volumeInfo?.title||'Tanpa Judul').replace(/"/g,'&quot;').replace(/</g,'&lt;');
+          const authors=(it.volumeInfo?.authors||[]).join(', ');
+          const year=it.volumeInfo?.publishedDate?(it.volumeInfo.publishedDate.slice(0,4)):'';
+          const pdfLink=it.accessInfo?.pdf?.downloadLink||'';
+          const infoLink=it.volumeInfo?.infoLink||'#';
+
+          if(pdfLink){
+            withPDF.push({title,authors,year,pdfLink});
+          }else{
+            noPDF.push({title,authors,year,infoLink});
+          }
+        });
+
+        resultsEl.innerHTML='';
+        // render yang ada PDF dulu
+        withPDF.forEach(b=>{
+          const card=document.createElement('div'); card.className='book';
+          card.innerHTML=`
+            <div class="title">${b.title}</div>
+            <div class="meta">${b.authors?b.authors+' • ':''}${b.year}</div>
+            <div class="actions">
+              <button class="btn primary" onclick="bacaPDF('${encodeURIComponent(b.pdfLink)}','${b.title}')">Baca</button>
+              <a class="btn link" href="${b.pdfLink}" target="_blank" rel="noopener">Buka</a>
+            </div>
+          `;
+          resultsEl.appendChild(card);
+        });
+        // render yang tidak ada PDF
+        noPDF.forEach(b=>{
+          const card=document.createElement('div'); card.className='book';
+          card.innerHTML=`
+            <div class="title">${b.title}</div>
+            <div class="meta">${b.authors?b.authors+' • ':''}${b.year}</div>
+            <div class="actions">
+              <a class="btn link" href="${b.infoLink}" target="_blank" rel="noopener">Buka</a>
+            </div>
+          `;
+          resultsEl.appendChild(card);
+        });
+
+      }catch(err){resultsEl.innerHTML='<div class="empty">Gagal memuat hasil. Coba lagi.</div>';}
+    }
+
+    function bacaPDF(encUrl,title){
+      const url=decodeURIComponent(encUrl);
+      viewer.style.display='block';
+      viewer.src=`https://docs.google.com/gview?embedded=true&url=${encodeURIComponent(url)}`;
+      viewerEmpty.style.display='none';
+      currentTitle=title;
+    }
+  </script>
+</body>
+</html>    function renderHistory(){
       const ul=document.getElementById('historyList');
       const hist=JSON.parse(localStorage.getItem('hist87')||'[]');
       ul.innerHTML = hist.length
