@@ -1,6 +1,6 @@
-# Aktivitas Membaca — Dengan Gambar Lokal (Vercel/Netlify)
+# Aktivitas Membaca — FINAL (dengan gambar Postimages)
 
-Website statis dengan carousel gallery dan timer. Gambar disimpan di folder `images/` agar otomatis tampil tanpa hosting eksternal.
+Website statis dengan carousel gallery (pakai gambar dari Postimages) + timer.
 
 ## Cara deploy ke Netlify Drop (paling gampang)
 1. Download ZIP ini dan ekstrak.
